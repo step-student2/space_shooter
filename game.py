@@ -1,6 +1,11 @@
 import pygame
 import random
+from os import path
 
+
+img_dir = path.join(path.dirname(__file__), 'assets')
+print(path.dirname(__file__))
+print(img_dir)
 WIDTH = 360
 HEIGHT = 480
 FPS = 30
@@ -17,6 +22,8 @@ class Player(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((40, 40))
         self.image.fill(RED)
+        self.image = pygame.transform.scale(player_img, (50, 50))
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH / 2
         self.rect.centery = HEIGHT - 50
@@ -27,7 +34,6 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.speedx = 0
         self.speedy = 0
-
         keystate = pygame.key.get_pressed()
 
         if keystate[pygame.K_LEFT] or keystate[pygame.K_a]:
@@ -41,6 +47,7 @@ class Player(pygame.sprite.Sprite):
 
         if keystate[pygame.K_DOWN] or keystate[pygame.K_s]:
             self.speedy = self.step_speed
+
 
         self.rect.x += self.speedx
         self.rect.y += self.speedy
@@ -62,7 +69,6 @@ class Player(pygame.sprite.Sprite):
         all_sprites.add(bullet)
         bullets.add(bullet)
 
-
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -78,12 +84,11 @@ class Mob(pygame.sprite.Sprite):
         self.speedx = random.randrange(-2, 2)
 
     def update(self):
-        self.rect.y += self.speedy
         self.rect.x += self.speedx
+        self.rect.y += self.speedy
 
-        if self.rect.top > HEIGHT + 10:
+        if self.rect.top > HEIGHT + 10 or self.rect.right <= 0 or self.rect.left >= WIDTH:
             self.determine_coordinates()
-
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -101,11 +106,17 @@ class Bullet(pygame.sprite.Sprite):
         if self.rect.bottom < 0:
             self.kill()
 
+
+
 pygame.init()
 pygame.mixer.init()  # для звуку
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("My Game")
 clock = pygame.time.Clock()
+
+background = pygame.image.load(path.join(img_dir, 'game_background.png'))
+background_rect = background.get_rect()
+player_img = pygame.image.load(path.join(img_dir, "space_shuttle.png")).convert()
 
 all_sprites = pygame.sprite.Group()
 player = Player()
@@ -129,27 +140,29 @@ while running:
         # перевірка закривання вікна
         if event.type == pygame.QUIT:
             running = False
-
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 player.shoot()
 
     all_sprites.update()
 
-    # перевірка на зіштовхування кулі з мобом
     hits = pygame.sprite.groupcollide(mobs, bullets, True, True)
-    
 
-    # перевірка на зіштовхування гравця з мобом
+    for hit in hits:
+        m = Mob()
+        all_sprites.add(m)
+        mobs.add(m)
+
     hits = pygame.sprite.spritecollide(player, mobs, False)
-    #print(hits)
+
     if hits:
         running = False
 
+
     screen.fill(BLACK)
+    screen.blit(background, background_rect)
     all_sprites.draw(screen)
     pygame.display.flip()
 
 pygame.quit()
-
 
