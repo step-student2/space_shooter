@@ -3,7 +3,6 @@ import random
 from os import path
 
 img_dir = path.join(path.dirname(__file__), 'assets')
-print(path.dirname(__file__))
 
 WIDTH = 360
 HEIGHT = 480
