@@ -2,10 +2,9 @@ import pygame
 import random
 from os import path
 
-
 img_dir = path.join(path.dirname(__file__), 'assets')
 print(path.dirname(__file__))
-print(img_dir)
+
 WIDTH = 360
 HEIGHT = 480
 FPS = 30
@@ -74,6 +73,8 @@ class Mob(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((30, 40))
         self.image.fill(RED)
+        self.image = pygame.transform.scale(mob_img, (30, 40))
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.determine_coordinates()
 
@@ -95,6 +96,8 @@ class Bullet(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((10, 20))
         self.image.fill(RED)
+        self.image = pygame.transform.scale(bullet_img, (10, 20))
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.bottom = y
         self.rect.centerx = x
@@ -117,6 +120,8 @@ clock = pygame.time.Clock()
 background = pygame.image.load(path.join(img_dir, 'game_background.png'))
 background_rect = background.get_rect()
 player_img = pygame.image.load(path.join(img_dir, "space_shuttle.png")).convert()
+mob_img = pygame.image.load(path.join(img_dir, "meteor_big_00.png")).convert()
+bullet_img = pygame.image.load(path.join(img_dir, "missile.png")).convert()
 
 all_sprites = pygame.sprite.Group()
 player = Player()
