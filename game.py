@@ -2,7 +2,9 @@ import pygame
 import random
 from os import path
 
-img_dir = path.join(path.dirname(__file__), 'assets')
+PATH = path.dirname(__file__)
+GRAPHICS = path.join(PATH, 'assets')
+SOUNDS = path.join(PATH, 'sounds')
 
 WIDTH = 360
 HEIGHT = 480
@@ -116,11 +118,11 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("My Game")
 clock = pygame.time.Clock()
 
-background = pygame.image.load(path.join(img_dir, 'game_background.png'))
+background = pygame.image.load(path.join(GRAPHICS, 'game_background.png'))
 background_rect = background.get_rect()
-player_img = pygame.image.load(path.join(img_dir, "space_shuttle.png")).convert()
-mob_img = pygame.image.load(path.join(img_dir, "meteor_big_00.png")).convert()
-bullet_img = pygame.image.load(path.join(img_dir, "missile.png")).convert()
+player_img = pygame.image.load(path.join(GRAPHICS, "space_shuttle.png")).convert()
+mob_img = pygame.image.load(path.join(GRAPHICS, "meteor_big_00.png")).convert()
+bullet_img = pygame.image.load(path.join(GRAPHICS, "missile.png")).convert()
 
 all_sprites = pygame.sprite.Group()
 player = Player()
