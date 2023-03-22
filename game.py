@@ -3,6 +3,13 @@ import random
 from os import path
 import constants as c
 
+def draw_text(surf, text, size, x, y):
+    font = pygame.font.Font(None, size)
+    text_surface = font.render(text, True, c.WHITE)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    surf.blit(text_surface, text_rect)
+
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -65,7 +72,7 @@ class Mob(pygame.sprite.Sprite):
         self.radius = int(self.rect.width * .90 / 2)
         self.rect.x = random.randrange(0, c.WIDTH - self.rect.width)
         self.rect.y = random.randrange(-150, -100)
-        self.speedy = random.randrange(5, 20)
+        self.speedy = random.randrange(2, 5)
         self.speedx = random.randrange(-3, 3)
 
         self.rotation = 0
@@ -110,7 +117,6 @@ class Bullet(pygame.sprite.Sprite):
 
         if self.rect.bottom < 0:
             self.kill()
-
 
 
 pygame.init()
@@ -175,6 +181,7 @@ while running:
     screen.fill(c.BLACK)
     screen.blit(background, background_rect)
     all_sprites.draw(screen)
+    draw_text(screen, str("Score:"), 20, c.WIDTH / 2, 10)  # 10px down from the screen
     pygame.display.flip()
 
 pygame.quit()
