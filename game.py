@@ -3,6 +3,8 @@ import random
 from os import path
 import constants as c
 
+score = 0
+
 def draw_text(surf, text, size, x, y):
     font = pygame.font.Font(None, size)
     text_surface = font.render(text, True, c.WHITE)
@@ -171,6 +173,7 @@ while running:
         m = Mob()
         all_sprites.add(m)
         mobs.add(m)
+        score += 1
 
     hits = pygame.sprite.spritecollide(player, mobs, False)
 
@@ -181,7 +184,7 @@ while running:
     screen.fill(c.BLACK)
     screen.blit(background, background_rect)
     all_sprites.draw(screen)
-    draw_text(screen, str("Score:"), 20, c.WIDTH / 2, 10)  # 10px down from the screen
+    draw_text(screen, "Score:" + str(score), 20, c.WIDTH / 2, 10)  # 10px down from the screen
     pygame.display.flip()
 
 pygame.quit()
