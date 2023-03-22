@@ -58,25 +58,40 @@ class Player(pygame.sprite.Sprite):
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((40, 40))
-        self.image.fill(c.RED)
-        self.image = pygame.transform.scale(mob_img, (40, 40))
-        self.image.set_colorkey(c.BLACK)
+        self.image_orig = random.choice(mob_img)
+        self.image_orig.set_colorkey(c.BLACK)
+        self.image = self.image_orig.copy()
         self.rect = self.image.get_rect()
-        self.determine_coordinates()
+        self.radius = int(self.rect.width * .90 / 2)
+        self.rect.x = random.randrange(0, c.WIDTH - self.rect.width)
+        self.rect.y = random.randrange(-150, -100)
+        self.speedy = random.randrange(5, 20)
+        self.speedx = random.randrange(-3, 3)
 
-    def determine_coordinates(self):
-        self.rect.x = random.randrange(c.WIDTH - self.rect.width)
-        self.rect.y = random.randrange(-100, -40)
-        self.speedy = random.randrange(2, 8)
-        self.speedx = random.randrange(-2, 2)
+        self.rotation = 0
+        self.rotation_speed = random.randrange(-8, 8)
+        self.last_update = pygame.time.get_ticks()
+
+    def rotate(self):
+        time_now = pygame.time.get_ticks()
+        if time_now - self.last_update > 50:
+            self.last_update = time_now
+            self.rotation = (self.rotation + self.rotation_speed) % 360
+            new_image = pygame.transform.rotate(self.image_orig, self.rotation)
+            old_center = self.rect.center
+            self.image = new_image
+            self.rect = self.image.get_rect()
+            self.rect.center = old_center
 
     def update(self):
+        self.rotate()
         self.rect.x += self.speedx
         self.rect.y += self.speedy
 
-        if self.rect.top > c.HEIGHT + 10 or self.rect.right <= 0 or self.rect.left >= c.WIDTH:
-            self.determine_coordinates()
+        if (self.rect.top > c.HEIGHT + 10) or (self.rect.left < -25) or (self.rect.right > c.WIDTH + 20):
+            self.rect.x = random.randrange(0, c.WIDTH - self.rect.width)
+            self.rect.y = random.randrange(-100, -40)
+            self.speedy = random.randrange(1, 8)
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -107,7 +122,13 @@ clock = pygame.time.Clock()
 background = pygame.image.load(path.join(c.GRAPHICS, 'game_background.png'))
 background_rect = background.get_rect()
 player_img = pygame.image.load(path.join(c.GRAPHICS, "space_shuttle.png")).convert()
-mob_img = pygame.image.load(path.join(c.GRAPHICS, "meteor_big_00.png")).convert()
+mob_img = [pygame.image.load(path.join(c.GRAPHICS, "meteor_big_00.png")).convert(),
+pygame.image.load(path.join(c.GRAPHICS, "meteor_big_01.png")).convert(),
+pygame.image.load(path.join(c.GRAPHICS, "meteor_medium_00.png")).convert(),
+pygame.image.load(path.join(c.GRAPHICS, "meteor_medium_01.png")).convert(),
+pygame.image.load(path.join(c.GRAPHICS, "meteor_small_00.png")).convert(),
+pygame.image.load(path.join(c.GRAPHICS, "meteor_small_01.png")).convert(),
+pygame.image.load(path.join(c.GRAPHICS, "meteor_tiny.png")).convert()]
 bullet_img = pygame.image.load(path.join(c.GRAPHICS, "missile.png")).convert()
 
 all_sprites = pygame.sprite.Group()
