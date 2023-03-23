@@ -25,6 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.speedx = 0
         self.speedy = 0
         self.step_speed = 8
+        self.lives = 3
 
     def update(self):
         self.speedx = 0
@@ -102,6 +103,7 @@ class Mob(pygame.sprite.Sprite):
             self.rect.y = random.randrange(-100, -40)
             self.speedy = random.randrange(1, 8)
 
+
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -175,16 +177,21 @@ while running:
         mobs.add(m)
         score += 1
 
-    hits = pygame.sprite.spritecollide(player, mobs, False)
+    hits = pygame.sprite.spritecollide(player, mobs, True)
 
     if hits:
+        player.lives = player.lives - 1
+
+    if player.lives <= 0:
         running = False
 
+    print(player.lives)
 
     screen.fill(c.BLACK)
     screen.blit(background, background_rect)
     all_sprites.draw(screen)
-    draw_text(screen, "Score:" + str(score), 20, c.WIDTH / 2, 10)  # 10px down from the screen
+    draw_text(screen, "Score:" + str(score), 20, c.WIDTH / 2, 10) # 10px down from the screen
+    draw_text(screen, "lives:" + str(player.lives), 20, c.WIDTH / 3, 10)
     pygame.display.flip()
 
 pygame.quit()
