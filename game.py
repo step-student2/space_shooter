@@ -155,7 +155,15 @@ bullets = pygame.sprite.Group()
 
 # Цикл гри
 running = True
+preloader_display = True
 while running:
+    if preloader_display:
+        preloader_display = False
+        screen.fill(c.BLACK)
+        draw_text(screen, "GET READY", 50, c.WIDTH / 2, (c.HEIGHT / 2) - 50)
+        pygame.display.update()
+        pygame.time.wait(2000)
+
     # Тримаємо на певній швидкості
     clock.tick(c.FPS)
     # Введення подій
@@ -179,11 +187,18 @@ while running:
 
     hits = pygame.sprite.spritecollide(player, mobs, True)
 
+    for hit in hits:
+        m = Mob()
+        all_sprites.add(m)
+        mobs.add(m)
+
     if hits:
         player.lives = player.lives - 1
 
     if player.lives <= 0:
-        running = False
+        preloader_display = True
+        player.lives = 3
+        score = 0
 
     print(player.lives)
 
