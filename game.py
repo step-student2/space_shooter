@@ -159,6 +159,11 @@ preloader_display = True
 while running:
     if preloader_display:
         preloader_display = False
+
+        main_sound = pygame.mixer.Sound(c.PATH + '\sounds\main_FrozenJam_song.ogg')
+        main_sound.set_volume(0.3)
+        main_sound.play()
+
         screen.fill(c.BLACK)
         draw_text(screen, "GET READY", 50, c.WIDTH / 2, (c.HEIGHT / 2) - 50)
         pygame.display.update()
