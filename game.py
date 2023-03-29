@@ -128,6 +128,7 @@ pygame.mixer.init()  # для звуку
 screen = pygame.display.set_mode((c.WIDTH, c.HEIGHT))
 pygame.display.set_caption("My Game")
 clock = pygame.time.Clock()
+main_sound_play = 0
 
 background = pygame.image.load(path.join(c.GRAPHICS, 'game_background.png'))
 background_rect = background.get_rect()
@@ -139,7 +140,7 @@ pygame.image.load(path.join(c.GRAPHICS, "meteor_medium_01.png")).convert(),
 pygame.image.load(path.join(c.GRAPHICS, "meteor_small_00.png")).convert(),
 pygame.image.load(path.join(c.GRAPHICS, "meteor_small_01.png")).convert(),
 pygame.image.load(path.join(c.GRAPHICS, "meteor_tiny.png")).convert()]
-bullet_img = pygame.image.load(path.join(c.GRAPHICS, "missile.png")).convert()
+bullet_img = pygame.image.load(path.join(c.GRAPHICS, "redlaser.png")).convert()
 
 all_sprites = pygame.sprite.Group()
 player = Player()
@@ -161,8 +162,11 @@ while running:
         preloader_display = False
 
         main_sound = pygame.mixer.Sound(c.PATH + '\sounds\main_FrozenJam_song.ogg')
-        main_sound.set_volume(0.3)
-        main_sound.play()
+        main_sound.set_volume(0.1)
+        if main_sound_play == 0:
+            main_sound.play()
+            main_sound_play += 1
+        # print(main_sound_play)
 
         screen.fill(c.BLACK)
         draw_text(screen, "GET READY", 50, c.WIDTH / 2, (c.HEIGHT / 2) - 50)
@@ -179,10 +183,17 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 player.shoot()
+                shoot_sound = pygame.mixer.Sound(c.PATH + '\sounds\pew.wav')
+                shoot_sound.set_volume(0.1)
+                shoot_sound.play()
 
     all_sprites.update()
 
     hits = pygame.sprite.groupcollide(mobs, bullets, True, True)
+    explo_sound = pygame.mixer.Sound(c.PATH + '\sounds\explosion_sound_02.wav')
+    explo_sound.set_volume(0.1)
+    if hits:
+        explo_sound.play()
 
     for hit in hits:
         m = Mob()
@@ -205,7 +216,7 @@ while running:
         player.lives = 3
         score = 0
 
-    print(player.lives)
+    #print(player.lives)
 
     screen.fill(c.BLACK)
     screen.blit(background, background_rect)
